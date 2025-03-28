@@ -1,0 +1,17 @@
+## Arquivos do Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.db
+*.db-shm
+*.db-wal
+*.pdb
+*.log
+
+## Diretórios de build
+bin/
+obj/
+
+## Outros
+*.vscode/
