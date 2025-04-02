@@ -1,12 +1,37 @@
-version: '3.4'
+version: '3.8'
 
 services:
+  db:
+    image: postgres:latest
+    container_name: developer-store-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: SalesDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - developer-store-network
+
   api:
-    image: nome-do-seu-projeto-api
+    container_name: developer-store-api
     build:
       context: .
-      dockerfile: SeuProjeto.API/Dockerfile
+      dockerfile: DeveloperStore.Sales.API/Dockerfile
     ports:
-      - "5000:80"
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - developer-store-network
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_ENVIRONMENT: Development
+
+volumes:
+  postgres_data:
+
+networks:
+  developer-store-network:
+    driver: bridge
