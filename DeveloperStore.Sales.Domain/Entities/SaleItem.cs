@@ -12,11 +12,7 @@ namespace DeveloperStore.Sales.Domain.Entities
         public decimal Discount { get; }
         public decimal Total => (UnitPrice * Quantity) - Discount;
 
-        public SaleItem(
-            Guid productId,
-            string productName,
-            int quantity,
-            decimal unitPrice)
+        public SaleItem(Guid productId, string productName, int quantity, decimal unitPrice)
         {
             if (productId == Guid.Empty)
                 throw new BusinessRuleValidationException("Product ID is required.");
@@ -37,8 +33,7 @@ namespace DeveloperStore.Sales.Domain.Entities
             ProductName = productName;
             Quantity = quantity;
             UnitPrice = unitPrice;
-
-            //  Resolver discount  *** Strategy Patterns  ***
+                       
             var discount = DiscountResolver.Resolve(quantity);
             Discount = discount.Calculate(quantity, unitPrice);
         }

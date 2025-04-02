@@ -2,6 +2,7 @@
 {
     public interface IDiscount
     {
-        decimal Calculate(int quantity, decimal price);
+        bool IsApplicable(int quantity);
+        decimal Calculate(int quantity, decimal unitPrice);
     }
 }

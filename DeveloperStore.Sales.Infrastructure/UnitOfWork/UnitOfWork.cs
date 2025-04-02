@@ -1,5 +1,4 @@
 ﻿using DeveloperStore.Sales.Domain;
-using DeveloperStore.Sales.Domain.Repositories;
 using DeveloperStore.Sales.Infrastructure.Data.Context;
 using DeveloperStore.Sales.Infrastructure.Interfaces;
 using DeveloperStore.Sales.Infrastructure.Repositories;
