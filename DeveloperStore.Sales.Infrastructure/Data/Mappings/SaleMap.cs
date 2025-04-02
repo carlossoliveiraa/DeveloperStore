@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DeveloperStore.Sales.Infrastructure.Persistence.Mappings
+namespace DeveloperStore.Sales.Infrastructure.Data.Mappings
 {
     public sealed class SaleMap : IEntityTypeConfiguration<Sale>
     {
@@ -32,11 +32,11 @@ namespace DeveloperStore.Sales.Infrastructure.Persistence.Mappings
             builder.Property(s => s.BranchName)
                 .IsRequired()
                 .HasMaxLength(100);
-
+                      
             builder.Property(s => s.IsCancelled)
                 .IsRequired();
 
-            // Relacionamento: Sale -> SaleItems (1:N)
+            // Sale -> SaleItems (1:N)
             builder.HasMany(s => s.Items)
                    .WithOne()
                    .HasForeignKey("SaleId") // Shadow property

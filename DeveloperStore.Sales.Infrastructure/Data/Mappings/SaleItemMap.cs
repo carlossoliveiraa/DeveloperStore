@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DeveloperStore.Sales.Infrastructure.Persistence.Mappings
+namespace DeveloperStore.Sales.Infrastructure.Data.Mappings
 {
     public sealed class SaleItemMap : IEntityTypeConfiguration<SaleItem>
     {
@@ -28,14 +28,7 @@ namespace DeveloperStore.Sales.Infrastructure.Persistence.Mappings
 
             builder.Property(item => item.Discount)
                 .IsRequired()
-                .HasPrecision(18, 2);
-
-            builder.Property(item => item.Total)
-                .HasPrecision(18, 2)
-                .HasComputedColumnSql("([UnitPrice] * [Quantity]) - [Discount]", stored: true); // Opcional, se usar SQL Server
-
-            //Do not try to map this property, it only exists in the domain
-            builder.Ignore(x => x.Total);
+                .HasPrecision(18, 2);              
                    
             builder.Property<Guid>("SaleId")
                 .IsRequired();

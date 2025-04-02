@@ -1,9 +1,8 @@
-﻿using DeveloperStore.Sales.Infrastructure.Persistence.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace DeveloperStore.Sales.Infrastructure.TestUtils
+namespace DeveloperStore.Sales.Infrastructure.Data.Context
 {
-    public static class TestSalesDbContextFactory
+    public static class SalesDbContextInMemory
     {
         public static SalesDbContext CreateInMemoryContext(string dbName)
         {
