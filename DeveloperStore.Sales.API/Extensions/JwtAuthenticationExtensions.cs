@@ -12,21 +12,42 @@ namespace DeveloperStore.Sales.API.Extensions
             var issuer = configuration["Jwt:Issuer"];
             var audience = configuration["Jwt:Audience"];
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = issuer,
+                    ValidAudience = audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                    ClockSkew = TimeSpan.Zero
+                };
+                              
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = issuer,
-                        ValidAudience = audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
+                        var token = context.Request.Headers["Authorization"].FirstOrDefault();
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            // Remove o prefixo "Bearer " se existir
+                            token = token.Replace("Bearer ", "", StringComparison.OrdinalIgnoreCase);
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
         }
     }
 }

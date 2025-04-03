@@ -13,17 +13,17 @@ namespace DeveloperStore.Sales.API.Extensions
                 {
                     Title = "DeveloperStore Sales API",
                     Version = "v1",
-                    Description = "Authenticate via POST /api/v1/auth/signin. Use 'Bearer {token}' to authorize."
+                    Description = "Authenticate via POST /api/v1/auth/signin. Use the JWT token directly in the Authorization header."
                 });
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                c.AddSecurityDefinition("JWT", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme."
+                    Description = "JWT Authorization header. Just paste your token directly."
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -34,7 +34,7 @@ namespace DeveloperStore.Sales.API.Extensions
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
+                                Id = "JWT"
                             }
                         },
                         Array.Empty<string>()
