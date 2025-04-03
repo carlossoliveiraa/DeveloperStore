@@ -1,42 +1,73 @@
-# Developer Store Sales API
+# Developer Store - Sales API
 
-## Initial Setup
+A robust sales management system built with .NET 8, following DDD (Domain-Driven Design) principles, Clean Architecture, and SOLID patterns.
+
+## Architecture Overview
+
+### Domain-Driven Design (DDD) Implementation
+- **Domain Layer**: Contains the core business logic, entities, and value objects
+- **Application Layer**: Handles use cases and orchestrates domain objects
+- **Infrastructure Layer**: Implements persistence and external services
+- **API Layer**: Provides the REST interface
+- **CrossCutting Layer**: Contains shared components and utilities
+
+### Design Patterns Used
+- **Repository Pattern**: For data access abstraction
+- **Unit of Work**: Ensures transaction consistency
+- **Strategy Pattern**: For flexible business rule implementation
+- **Factory Pattern**: For object creation
+- **Observer Pattern**: For event handling (implemented via MediatR)
+- **Specification Pattern**: For complex business rules
+
+### Clean Architecture
+- Clear separation of concerns
+- Dependency inversion principle
+- Independent of frameworks
+- Testable architecture
+
+## Getting Started
+
+### Prerequisites
+- .NET 8 SDK
+- Docker Desktop
+- Visual Studio 2022 or VS Code
+
+### Installation Steps
 
 1. Clone the repository
 ```bash
-git clone [repository-url]
+git clone https://github.com/carlossoliveiraa/DeveloperStore.git
 cd DeveloperStore
-```
 
-2. Install EF Core tools
-```powershell
-Install-Package Microsoft.EntityFrameworkCore.Tools
-Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
-```
 
-3. Configure PostgreSQL
+2. Start PostgreSQL using Docker
 ```bash
-# Using Docker
-docker run --name developer-store-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=SalesDb -p 5432:5432 -d postgres:15
+docker-compose -f docker-compose.db.yml up -d
 ```
 
-4. Run Migrations
-```powershell
-# In Infrastructure layer
+3. Run Database Migrations
+```bash
+# For Sales Context
 Add-Migration InitialSales -Context SalesDbContext -OutputDir Data/Migrations/Sales
+Update-Database -Context SalesDbContext
+
+# For Identity Context
 Add-Migration InitialIdentity -Context UserDbContext -OutputDir Data/Migrations/Identity
+Update-Database -Context UserDbContext
 ```
 
-5. Start the application
-```powershell
+4. Run the application
+```bash
 dotnet run --project DeveloperStore.Sales.API
 ```
 
-## Authentication
+## Testing the API
 
-1. Login to get JWT token:
-```bash
-POST http://localhost:8080/api/v1/auth/signin
+### Authentication
+First, obtain a JWT token by authenticating:
+
+```http
+POST /api/auth/login
 Content-Type: application/json
 
 {
@@ -45,18 +76,13 @@ Content-Type: application/json
 }
 ```
 
-2. Use the returned token in Authorization header:
-```
-Authorization: [token]
-```
+### Creating a Sale
+Use the following model to create a sale:
 
-## Main Endpoints
-
-### Create Sale
-```bash
-POST /api/v1/sales/create
+```http
+POST /api/sales
+Authorization: Bearer {your-jwt-token}
 Content-Type: application/json
-Authorization: [token]
 
 {
   "saleNumber": "S-20250403-001",
@@ -82,118 +108,41 @@ Authorization: [token]
 }
 ```
 
-### Other Endpoints
-- `GET /api/v1/sales/{id}` - Get sale by ID
-- `GET /api/v1/sales?page=1&pageSize=10` - List paginated sales
-- `PATCH /api/v1/sales/{id}/cancel` - Cancel sale
+## Testing Coverage
 
-## Technologies
+The project maintains a high testing standard with over 70% unit test coverage. Tests are implemented using:
+- xUnit for test framework
+- Moq for mocking
+- FluentAssertions for assertions
 
-- .NET 8
-- PostgreSQL
-- Entity Framework Core
-- JWT Authentication
-- Docker
 
-## Project Structure
+Key areas covered by tests:
+- Domain entities and value objects
+- Application services
+- Command/Query handlers
+- Business rules validation
+- Integration tests for critical paths
 
-The solution is organized using Clean Architecture principles with the following layers:
+## Recent Updates
 
-- **DeveloperStore.Sales.API**: Presentation layer (API endpoints)
-- **DeveloperStore.Sales.Application**: Application layer (use cases and business logic)
-- **DeveloperStore.Sales.Domain**: Domain layer (entities and business rules)
-- **DeveloperStore.Sales.Infrastructure**: Infrastructure layer (data access, external services)
-- **DeveloperStore.Sales.CrossCutting**: Cross-cutting concerns (logging, validation)
-- **DeveloperStore.Sales.Tests**: Unit and integration tests
+### Event Handling Implementation
+We've recently added an event-based messaging system using MediatR:
+- `QueueMessageEvent`: Represents messages to be queued
+- `QueueMessageEventHandler`: Handles message logging
+- Asynchronous processing
+- Structured logging integration
 
-## Prerequisites
+## Technical Specifications
 
-- [Docker](https://www.docker.com/get-docker)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) (for Windows users)
+- **Framework**: .NET 8
+- **Database**: PostgreSQL
+- **ORM**: Entity Framework Core
+- **Authentication**: JWT Bearer
+- **Documentation**: Swagger/OpenAPI
+- **Logging**: Structured logging with Serilog
+- **Message Bus**: MediatR for in-memory events
 
-## Getting Started
+## Contributing
 
-### 1. Clone the Repository
+Please read our contributing guidelines before submitting pull requests.
 
-```bash
-git clone [repository-url]
-cd DeveloperStore
-```
-
-### 2. Start the Development Environment
-
-The project uses Docker Compose to set up the development environment. You can start all services using the provided PowerShell script:
-
-```powershell
-.\start-dev.ps1
-```
-
-Or manually using Docker Compose:
-
-```bash
-docker-compose up -d
-```
-
-This will start:
-- PostgreSQL database on port 5432
-- API service on ports 8080 (HTTP) and 8081 (HTTPS)
-
-### 3. Database Configuration
-
-The PostgreSQL database is automatically configured with the following settings:
-- Host: localhost
-- Port: 5432
-- Database: SalesDb
-- Username: postgres
-- Password: postgres
-
-### 4. API Access
-
-Once the services are running, you can access the API at:
-- HTTP: http://localhost:8080
-- HTTPS: https://localhost:8081
-
-### 5. Development Workflow
-
-The project is set up for development with hot-reload enabled. Changes to the code will automatically trigger a rebuild of the application.
-
-## Environment Variables
-
-The following environment variables are configured in the docker-compose.yml:
-
-- `ASPNETCORE_ENVIRONMENT`: Development
-- `ASPNETCORE_URLS`: "http://+:80;https://+:443"
-- `ConnectionStrings__SalesConnection`: PostgreSQL connection string
-- `ASPNETCORE_Kestrel__Certificates__Default__Path`: Path to SSL certificate
-- `ASPNETCORE_Kestrel__Certificates__Default__Password`: SSL certificate password
-
-## Stopping the Services
-
-To stop all services:
-
-```bash
-docker-compose down
-```
-
-## Additional Information
-
-- The project uses Clean Architecture principles for better separation of concerns and maintainability
-- PostgreSQL is used as the primary database
-- Docker is used for containerization and development environment setup
-- The API is configured with both HTTP and HTTPS endpoints
-- Development environment includes hot-reload for faster development cycles
-
-## Troubleshooting
-
-If you encounter any issues:
-
-1. Ensure all prerequisites are installed
-2. Check if Docker is running
-3. Verify that ports 5432, 8080, and 8081 are not in use by other applications
-4. Check Docker logs for any errors:
-   ```bash
-   docker-compose logs
-   ```
- 
