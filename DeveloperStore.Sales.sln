@@ -1,14 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35818.85 d17.13
+VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
-	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperStore.Sales.Application", "DeveloperStore.Sales.Application\DeveloperStore.Sales.Application.csproj", "{87B906BC-6713-498A-8041-0852B4D6BBAD}"
 EndProject
@@ -19,6 +14,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperStore.Sales.Tests", "DeveloperStore.Sales.Tests\DeveloperStore.Sales.Tests.csproj", "{C3157ACB-4ADD-4FA2-9F78-09FDBB627E2A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperStore.Sales.API", "DeveloperStore.Sales.API\DeveloperStore.Sales.API.csproj", "{EB6C17E6-7584-4EF2-996D-C19BC8B6C7BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperStore.Sales.CrossCutting", "DeveloperStore.Sales.CrossCutting\DeveloperStore.Sales.CrossCutting.csproj", "{2B3325E2-F53B-48B4-B1AD-FBC94762F20A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		start-dev.ps1 = start-dev.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +49,10 @@ Global
 		{EB6C17E6-7584-4EF2-996D-C19BC8B6C7BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB6C17E6-7584-4EF2-996D-C19BC8B6C7BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB6C17E6-7584-4EF2-996D-C19BC8B6C7BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B3325E2-F53B-48B4-B1AD-FBC94762F20A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B3325E2-F53B-48B4-B1AD-FBC94762F20A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B3325E2-F53B-48B4-B1AD-FBC94762F20A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B3325E2-F53B-48B4-B1AD-FBC94762F20A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +63,7 @@ Global
 		{3760D7D1-18A4-47B9-9C73-FE8AD7A9D922} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{C3157ACB-4ADD-4FA2-9F78-09FDBB627E2A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{EB6C17E6-7584-4EF2-996D-C19BC8B6C7BF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{2B3325E2-F53B-48B4-B1AD-FBC94762F20A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {19FD87E1-DE6C-444F-893C-619270C0F9B1}

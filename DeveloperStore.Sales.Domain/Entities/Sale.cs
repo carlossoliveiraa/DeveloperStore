@@ -6,20 +6,24 @@ namespace DeveloperStore.Sales.Domain.Entities
     {
         public string SaleNumber { get; private set; }
         public DateTime SaleDate { get; private set; }
-
         public Guid CustomerId { get; private set; }
         public string CustomerName { get; private set; }
-
         public Guid BranchId { get; private set; }
         public string BranchName { get; private set; }
-
         public bool IsCancelled { get; private set; }
 
-        public List<SaleItem> Items { get; private set; } = new();
+        private readonly List<SaleItem> _items = new();
+        public IReadOnlyCollection<SaleItem> Items => _items.AsReadOnly();
 
-        public decimal TotalAmount => Items.Sum(item => item.Total);
+        public decimal TotalAmount => _items.Sum(item => item.Total);
 
-        public Sale(string saleNumber, DateTime saleDate, Guid customerId, string customerName, Guid branchId, string branchName)
+        public Sale(
+            string saleNumber,
+            DateTime saleDate,
+            Guid customerId,
+            string customerName,
+            Guid branchId,
+            string branchName)
         {
             if (string.IsNullOrWhiteSpace(saleNumber))
                 throw new BusinessRuleValidationException("Sale number is required.");
@@ -36,18 +40,17 @@ namespace DeveloperStore.Sales.Domain.Entities
             CustomerName = customerName;
             BranchId = branchId;
             BranchName = branchName;
-            IsCancelled = false;
         }
 
         public void AddItem(Guid productId, string productName, int quantity, decimal unitPrice)
         {
             var item = new SaleItem(productId, productName, quantity, unitPrice);
-            Items.Add(item);
+            _items.Add(item);
         }
 
-        public void Cancel()
-        {
-            IsCancelled = true;
-        }
+        public void Cancel() => IsCancelled = true;
+
+        public void ClearItems() => _items.Clear();
     }
+
 }

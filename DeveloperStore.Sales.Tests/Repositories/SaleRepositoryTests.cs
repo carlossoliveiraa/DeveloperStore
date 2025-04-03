@@ -1,125 +1,110 @@
 ﻿using DeveloperStore.Sales.Domain.Entities;
-using DeveloperStore.Sales.Infrastructure.Repositories;
-using DeveloperStore.Sales.Infrastructure.TestUtils;
+using DeveloperStore.Sales.Infrastructure.Data.Context;
+using DeveloperStore.Sales.Infrastructure.UnitOfWork;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 
-namespace DeveloperStore.Sales.Tests.Repositories
+namespace DeveloperStore.Sales.Tests.Repositories;
+
+public class SaleRepositoryTests
 {
-    public class SaleRepositoryTests
+    private static IUnitOfWork CreateUnitOfWork()
     {
-        [Fact]
-        public async Task Should_Add_Sale_And_Retrieve_By_Id()
-        {
-            //// Arrange
-            var dbName = Guid.NewGuid().ToString();
-            var context = TestSalesDbContextFactory.CreateInMemoryContext(dbName);
-            var repository = new SaleRepository(context);
+        var dbName = $"SalesDbTest-{Guid.NewGuid()}";
+        var options = new DbContextOptionsBuilder<SalesDbContext>()
+            .UseInMemoryDatabase(dbName)
+            .Options;
 
-            var sale = new Sale(
-                saleNumber: "TEST-001",
-                saleDate: DateTime.UtcNow,
-                customerId: Guid.NewGuid(),
-                customerName: "Carlos Oliveira",
-                branchId: Guid.NewGuid(),
-                branchName: "Unidade Central"
-            );
+        var context = new SalesDbContext(options);
+        return new UnitOfWork(context);
+    }
 
-            sale.AddItem(Guid.NewGuid(), "Produto A", 5, 100m);
+    [Fact]
+    public async Task Should_Add_Sale_And_Retrieve_By_Id()
+    {
+        // Arrange
+        using var uow = CreateUnitOfWork();
+        var repository = uow.Repository<Sale>();
 
-            //// Act
-            await repository.AddAsync(sale);
-            var result = await repository.GetByIdAsync(sale.Id);
+        var sale = new Sale(
+            saleNumber: "TEST-001",
+            saleDate: DateTime.UtcNow,
+            customerId: Guid.NewGuid(),
+            customerName: "Carlos Oliveira",
+            branchId: Guid.NewGuid(),
+            branchName: "Unidade Central"
+        );
+        sale.AddItem(Guid.NewGuid(), "Produto A", 5, 100m);
 
-            //// Assert
-            result.Should().NotBeNull();
-            result!.SaleNumber.Should().Be("TEST-001");
-            result.Items.Should().HaveCount(1);
-        }
+        // Act
+        await repository.AddAsync(sale);
+        await uow.CommitAsync();
 
-        [Fact]
-        public async Task Should_Return_All_Sales()
-        {
-            //// Arrange
-            var dbName = Guid.NewGuid().ToString();
-            var context = TestSalesDbContextFactory.CreateInMemoryContext(dbName);
-            var repository = new SaleRepository(context);
+        var result = await repository.GetAsync(x => x.Id == sale.Id);
 
-            for (int i = 1; i <= 3; i++)
-            {
-                var sale = new Sale(
-                    saleNumber: $"TEST-00{i}",
-                    saleDate: DateTime.UtcNow,
-                    customerId: Guid.NewGuid(),
-                    customerName: $"Cliente {i}",
-                    branchId: Guid.NewGuid(),
-                    branchName: "Filial A"
-                );
+        // Assert
+        result.Should().NotBeNull();
+        result!.SaleNumber.Should().Be("TEST-001");
+        result.Items.Should().HaveCount(1);
+    }
 
-                sale.AddItem(Guid.NewGuid(), $"Produto {i}", 2, 100m);
-                await repository.AddAsync(sale);
-            }
+    [Fact]
+    public async Task Should_Update_Sale()
+    {
+        // Arrange
+        using var uow = CreateUnitOfWork();
+        var repository = uow.Repository<Sale>();
 
-            //// Act
-            var allSales = await repository.GetAllAsync();
+        var sale = new Sale(
+            saleNumber: "UPDATE-001",
+            saleDate: DateTime.UtcNow,
+            customerId: Guid.NewGuid(),
+            customerName: "Cliente Original",
+            branchId: Guid.NewGuid(),
+            branchName: "Filial A"
+        );
 
-            //// Assert
-            allSales.Should().HaveCount(3);
-        }
+        await repository.AddAsync(sale);
+        await uow.CommitAsync();
 
-        [Fact]
-        public async Task Should_Update_Sale()
-        {
-            //// Arrange
-            var dbName = Guid.NewGuid().ToString();
-            var context = TestSalesDbContextFactory.CreateInMemoryContext(dbName);
-            var repository = new SaleRepository(context);
+        // Act
+        sale.Cancel(); // método do domínio
+        repository.Update(sale);
+        await uow.CommitAsync();
 
-            var sale = new Sale(
-                saleNumber: "UPDATE-001",
-                saleDate: DateTime.UtcNow,
-                customerId: Guid.NewGuid(),
-                customerName: "Cliente Original",
-                branchId: Guid.NewGuid(),
-                branchName: "Filial A"
-            );
+        var updated = await repository.GetAsync(x => x.Id == sale.Id);
 
-            await repository.AddAsync(sale);
+        // Assert
+        updated.Should().NotBeNull();
+        updated!.IsCancelled.Should().BeTrue();
+    }
 
-            //// Act
-            sale.Cancel(); // Método do domínio
-            await repository.UpdateAsync(sale);
-            var updatedSale = await repository.GetByIdAsync(sale.Id);
+    [Fact]
+    public async Task Should_Delete_Sale()
+    {
+        // Arrange
+        using var uow = CreateUnitOfWork();
+        var repository = uow.Repository<Sale>();
 
-            //// Assert
-            updatedSale.Should().NotBeNull();
-            updatedSale!.IsCancelled.Should().BeTrue();
-        }
+        var sale = new Sale(
+            saleNumber: "DELETE-001",
+            saleDate: DateTime.UtcNow,
+            customerId: Guid.NewGuid(),
+            customerName: "Carlos",
+            branchId: Guid.NewGuid(),
+            branchName: "Filial B"
+        );
 
-        [Fact]
-        public async Task Should_Delete_Sale()
-        {
-            //// Arrange
-            var dbName = Guid.NewGuid().ToString();
-            var context = TestSalesDbContextFactory.CreateInMemoryContext(dbName);
-            var repository = new SaleRepository(context);
+        await repository.AddAsync(sale);
+        await uow.CommitAsync();
 
-            var sale = new Sale(
-                saleNumber: "DELETE-001",
-                saleDate: DateTime.UtcNow,
-                customerId: Guid.NewGuid(),
-                customerName: "Carlos",
-                branchId: Guid.NewGuid(),
-                branchName: "Filial B"
-            );
+        // Act
+        repository.Remove(sale);
+        await uow.CommitAsync();
 
-            await repository.AddAsync(sale);
+        var deleted = await repository.GetAsync(x => x.Id == sale.Id);
 
-            //// Act
-            await repository.DeleteAsync(sale.Id);
-            var deletedSale = await repository.GetByIdAsync(sale.Id);
-
-            //// Assert
-            deletedSale.Should().BeNull();
-        }
+        // Assert
+        deleted.Should().BeNull();
     }
 }

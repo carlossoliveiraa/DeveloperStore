@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: developer-store-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: SalesDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - developer-store-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    container_name: developer-store-api
+    build:
+      context: .
+      dockerfile: DeveloperStore.Sales.API/Dockerfile
+      target: final
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+      - "8081:443"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "http://+:80;https://+:443"
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
+      ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      ConnectionStrings__SalesConnection: "Host=db;Port=5432;Database=SalesDb;Username=postgres;Password=postgres"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: YourSecurePassword123
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/https:ro
+      - ./DeveloperStore.Sales.API:/app
+      - ./DeveloperStore.Sales.Application:/src/DeveloperStore.Sales.Application
+      - ./DeveloperStore.Sales.Domain:/src/DeveloperStore.Sales.Domain
+      - ./DeveloperStore.Sales.Infrastructure:/src/DeveloperStore.Sales.Infrastructure
+    networks:
+      - developer-store-network
+
+volumes:
+  postgres_data:
+
+networks:
+  developer-store-network:
+    driver: bridge
