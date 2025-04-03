@@ -1,5 +1,4 @@
-﻿// SaleController.cs
-using DeveloperStore.Sales.API.Models;
+﻿using DeveloperStore.Sales.API.Models;
 using DeveloperStore.Sales.Application.DTOs.Inputs;
 using DeveloperStore.Sales.Application.Services;
 using Microsoft.AspNetCore.Authorization;

@@ -1,5 +1,4 @@
-﻿// AuthController.cs
-using DeveloperStore.Sales.API.Models;
+﻿using DeveloperStore.Sales.API.Models;
 using DeveloperStore.Sales.API.Models.Auth;
 using DeveloperStore.Sales.API.Settings;
 using DeveloperStore.Sales.Infrastructure.Identity;
