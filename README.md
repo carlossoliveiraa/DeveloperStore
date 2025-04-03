@@ -1,4 +1,99 @@
-This project is a .NET Core API for a sales system, using Clean Architecture principles and PostgreSQL as the database.
+# Developer Store Sales API
+
+## Initial Setup
+
+1. Clone the repository
+```bash
+git clone [repository-url]
+cd DeveloperStore
+```
+
+2. Install EF Core tools
+```powershell
+Install-Package Microsoft.EntityFrameworkCore.Tools
+Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
+```
+
+3. Configure PostgreSQL
+```bash
+# Using Docker
+docker run --name developer-store-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=SalesDb -p 5432:5432 -d postgres:15
+```
+
+4. Run Migrations
+```powershell
+# In Infrastructure layer
+Add-Migration InitialSales -Context SalesDbContext -OutputDir Data/Migrations/Sales
+Add-Migration InitialIdentity -Context UserDbContext -OutputDir Data/Migrations/Identity
+```
+
+5. Start the application
+```powershell
+dotnet run --project DeveloperStore.Sales.API
+```
+
+## Authentication
+
+1. Login to get JWT token:
+```bash
+POST http://localhost:8080/api/v1/auth/signin
+Content-Type: application/json
+
+{
+  "email": "admin@admin.com",
+  "password": "admin"
+}
+```
+
+2. Use the returned token in Authorization header:
+```
+Authorization: [token]
+```
+
+## Main Endpoints
+
+### Create Sale
+```bash
+POST /api/v1/sales/create
+Content-Type: application/json
+Authorization: [token]
+
+{
+  "saleNumber": "S-20250403-001",
+  "saleDate": "2025-04-03T19:30:00Z",
+  "customerId": "c1a1a8a0-4c44-4f3e-9e61-d2a62d1bcd11",
+  "customerName": "Carlos Oliveira",
+  "branchId": "a7e1a5c3-6f4f-4412-8b99-71bb30d54c99",
+  "branchName": "Filial São Paulo",
+  "items": [
+    {
+      "productId": "f3e3c8f1-5f01-4d4f-9f4d-12bb5566b1aa",
+      "productName": "Monitor 27\" 4K",
+      "quantity": 5,
+      "unitPrice": 1200.00
+    },
+    {
+      "productId": "da8b1e9e-2334-4dc9-8b6a-5c27e8f5e33d",
+      "productName": "Cabo HDMI 2m",
+      "quantity": 2,
+      "unitPrice": 50.00
+    }
+  ]
+}
+```
+
+### Other Endpoints
+- `GET /api/v1/sales/{id}` - Get sale by ID
+- `GET /api/v1/sales?page=1&pageSize=10` - List paginated sales
+- `PATCH /api/v1/sales/{id}/cancel` - Cancel sale
+
+## Technologies
+
+- .NET 8
+- PostgreSQL
+- Entity Framework Core
+- JWT Authentication
+- Docker
 
 ## Project Structure
 
