@@ -1,6 +1,6 @@
-﻿namespace DeveloperStore.Sales.Application.DTOs
+﻿namespace DeveloperStore.Sales.Application.DTOs.Outputs
 {
-    public class SaleItemDto
+    public class SaleItemOutputDto
     {
         public Guid ProductId { get; set; }
         public string ProductName { get; set; } = default!;

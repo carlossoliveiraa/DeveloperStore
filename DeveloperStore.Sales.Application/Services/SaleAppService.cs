@@ -1,4 +1,6 @@
 ﻿using DeveloperStore.Sales.Application.DTOs;
+using DeveloperStore.Sales.Application.DTOs.Inputs;
+using DeveloperStore.Sales.Application.DTOs.Outputs;
 using DeveloperStore.Sales.Application.Interfaces.Messaging;
 using DeveloperStore.Sales.Domain.Entities;
 using DeveloperStore.Sales.Infrastructure.UnitOfWork;
@@ -16,7 +18,7 @@ namespace DeveloperStore.Sales.Application.Services
             _eventPublisher = eventPublisher;
         }
 
-        public async Task<Guid> CreateAsync(SaleDto dto)
+        public async Task<Guid> CreateAsync(SaleInputDto dto)
         {
             var sale = new Sale(
                 dto.SaleNumber,
@@ -41,14 +43,14 @@ namespace DeveloperStore.Sales.Application.Services
             return sale.Id;
         }
 
-        public async Task<SaleDto?> GetByIdAsync(Guid id)
+        public async Task<SaleOutputDto?> GetByIdAsync(Guid id)
         {
             var repository = _unitOfWork.Repository<Sale>();
             var sale = await repository.GetAsync(x => x.Id == id);
 
             if (sale is null) return null;
 
-            return new SaleDto
+            return new SaleOutputDto
             {
                 Id = sale.Id,
                 SaleNumber = sale.SaleNumber,
@@ -59,7 +61,7 @@ namespace DeveloperStore.Sales.Application.Services
                 BranchName = sale.BranchName,
                 TotalAmount = sale.TotalAmount,
                 IsCancelled = sale.IsCancelled,
-                Items = sale.Items.Select(i => new SaleItemDto
+                Items = sale.Items.Select(i => new SaleItemOutputDto
                 {
                     ProductId = i.ProductId,
                     ProductName = i.ProductName,
@@ -84,13 +86,13 @@ namespace DeveloperStore.Sales.Application.Services
             await _eventPublisher.PublishSaleCancelledAsync(sale.Id);
         }
 
-        public async Task<PagedResult<SaleDto>> ListPagedAsync(int page, int pageSize)
+        public async Task<PagedResult<SaleOutputDto>> ListPagedAsync(int page, int pageSize)
         {
             var repository = _unitOfWork.Repository<Sale>();
 
             var result = await repository.GetPagedAsync(s => true, page, pageSize);
 
-            var saleDtos = result.Items.Select(sale => new SaleDto
+            var saleDtos = result.Items.Select(sale => new SaleOutputDto
             {
                 Id = sale.Id,
                 SaleNumber = sale.SaleNumber,
@@ -101,7 +103,7 @@ namespace DeveloperStore.Sales.Application.Services
                 BranchName = sale.BranchName,
                 TotalAmount = sale.TotalAmount,
                 IsCancelled = sale.IsCancelled,
-                Items = sale.Items.Select(i => new SaleItemDto
+                Items = sale.Items.Select(i => new SaleItemOutputDto
                 {
                     ProductId = i.ProductId,
                     ProductName = i.ProductName,
@@ -110,7 +112,7 @@ namespace DeveloperStore.Sales.Application.Services
                 }).ToList()
             });
 
-            return new PagedResult<SaleDto>
+            return new PagedResult<SaleOutputDto>
             {
                 Items = saleDtos,
                 CurrentPage = result.CurrentPage,

@@ -1,6 +1,6 @@
-﻿namespace DeveloperStore.Sales.Application.DTOs
+﻿namespace DeveloperStore.Sales.Application.DTOs.Outputs
 {
-    public class SaleDto
+    public class SaleOutputDto
     {
         public Guid Id { get; set; }
         public string SaleNumber { get; set; } = default!;
@@ -11,6 +11,6 @@
         public string BranchName { get; set; } = default!;
         public decimal TotalAmount { get; set; }
         public bool IsCancelled { get; set; }
-        public List<SaleItemDto> Items { get; set; } = new();
+        public List<SaleItemOutputDto> Items { get; set; } = new();
     }
 }
