@@ -1,10 +1,11 @@
-﻿using DeveloperStore.Sales.API.Models;
+﻿// BaseController.cs
+using DeveloperStore.Sales.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeveloperStore.Sales.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public abstract class BaseController : ControllerBase
     {
         protected IActionResult Success(string? message = null)
@@ -15,6 +16,5 @@ namespace DeveloperStore.Sales.API.Controllers
 
         protected IActionResult Failure(string message, int statusCode = 400)
             => StatusCode(statusCode, ApiResponse.Fail(message));
-               
     }
 }

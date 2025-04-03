@@ -7,17 +7,15 @@ namespace DeveloperStore.Sales.API.Extensions
     {
         public static void AddCustomSwagger(this IServiceCollection services)
         {
-            services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "DeveloperStore Sales API",
                     Version = "v1",
-                    Description = "Use POST /api/v1/auth/signin to get a JWT token. Click 'Authorize' and enter 'Bearer {your_token}'."
+                    Description = "Authenticate via POST /api/v1/auth/signin. Use 'Bearer {token}' to authorize."
                 });
 
-                // JWT configuration for Swagger UI
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -43,13 +41,10 @@ namespace DeveloperStore.Sales.API.Extensions
                     }
                 });
 
-                // Optional: include XML comments if available
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 if (File.Exists(xmlPath))
-                {
                     c.IncludeXmlComments(xmlPath);
-                }
             });
         }
     }

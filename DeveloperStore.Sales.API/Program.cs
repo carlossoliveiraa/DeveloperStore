@@ -31,15 +31,12 @@ public class Program
             services.AddCustomSwagger();
             services.AddCustomHealthChecks(configuration);
             services.AddControllers();
+            services.AddEndpointsApiExplorer();
 
-          
             var app = builder.Build();
 
-          
-            app.UseSwagger(c =>
-            {
-                c.RouteTemplate = "swagger/{documentName}/swagger.json";
-            });
+
+            app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {

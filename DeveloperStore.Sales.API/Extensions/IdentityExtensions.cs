@@ -9,7 +9,9 @@ namespace DeveloperStore.Sales.API.Extensions
     {
         public static void AddCustomIdentity(this IServiceCollection services, IConfiguration configuration)
         {
-            // Configure ASP.NET Identity with custom password and lockout settings
+            services.AddDbContext<UserDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("SalesConnection")));
+
             services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -26,7 +28,6 @@ namespace DeveloperStore.Sales.API.Extensions
             })
             .AddEntityFrameworkStores<UserDbContext>()
             .AddDefaultTokenProviders();
-            
         }
     }
 }

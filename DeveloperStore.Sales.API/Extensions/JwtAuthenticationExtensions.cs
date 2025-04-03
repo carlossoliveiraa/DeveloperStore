@@ -8,7 +8,7 @@ namespace DeveloperStore.Sales.API.Extensions
     {
         public static void AddCustomJwt(this IServiceCollection services, IConfiguration configuration)
         {
-            var key = configuration["Jwt:Key"] ?? "MySuperSecureKey123";
+            var key = configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key not configured");
             var issuer = configuration["Jwt:Issuer"];
             var audience = configuration["Jwt:Audience"];
 
