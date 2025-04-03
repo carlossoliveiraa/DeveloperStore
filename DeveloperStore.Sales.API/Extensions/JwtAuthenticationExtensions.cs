@@ -8,18 +8,23 @@ namespace DeveloperStore.Sales.API.Extensions
     {
         public static void AddCustomJwt(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtKey = configuration["Jwt:Key"] ?? "MySuperSecureKey123";
+            var key = configuration["Jwt:Key"] ?? "MySuperSecureKey123";
+            var issuer = configuration["Jwt:Issuer"];
+            var audience = configuration["Jwt:Audience"];
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                        ValidIssuer = issuer,
+                        ValidAudience = audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
         }

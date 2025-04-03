@@ -11,17 +11,17 @@ namespace DeveloperStore.Sales.API.Extensions
     {
         public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // DbContext for Sales (PostgreSQL)
+            // Configure SalesDbContext (PostgreSQL)
             services.AddDbContext<SalesDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("SalesConnection")));
 
-            // Unit of Work pattern
+            // Register Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            // Application Layer Services
+            // Register application services
             services.AddScoped<SaleAppService>();
 
-            // Event Publisher (fake/mock for now)
+            // Register event publisher (placeholder/mock)
             services.AddScoped<ISaleEventPublisher, FakeSaleEventPublisher>();
         }
     }

@@ -9,10 +9,11 @@ namespace DeveloperStore.Sales.API.Extensions
             host.UseSerilog((context, config) =>
             {
                 config.ReadFrom.Configuration(context.Configuration);
+
+                // Write logs to console and rolling file
                 config.WriteTo.Console();
                 config.WriteTo.File("logs/api-log.txt", rollingInterval: RollingInterval.Day);
             });
         }
     }
 }
-

@@ -4,7 +4,9 @@
     {
         public static void AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHealthChecks().AddNpgSql(configuration.GetConnectionString("SalesConnection")!);
+            // Adds PostgreSQL health check using the configured connection string
+            services.AddHealthChecks()
+                .AddNpgSql(configuration.GetConnectionString("SalesConnection")!);
         }
     }
 }

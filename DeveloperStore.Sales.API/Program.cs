@@ -1,10 +1,15 @@
 using DeveloperStore.Sales.API.Extensions;
 using DeveloperStore.Sales.API.Settings;
+using DeveloperStore.Sales.Infrastructure.Data.Context;
+using DeveloperStore.Sales.Infrastructure.Data;
+using DeveloperStore.Sales.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
 
 public class Program
 {
-    private static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         try
         {
@@ -12,35 +17,86 @@ public class Program
 
             var builder = WebApplication.CreateBuilder(args);
 
+         
             builder.Host.ConfigureLoggingExtensions();
 
-            builder.Services.AddCustomIdentity(builder.Configuration);
+            var services = builder.Services;
+            var configuration = builder.Configuration;
 
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
+         
+            services.AddCustomIdentity(configuration);
+            services.AddApplicationServices(configuration);
+            services.AddCustomJwt(configuration);
+            services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
+            services.AddCustomSwagger();
+            services.AddCustomHealthChecks(configuration);
+            services.AddControllers();
 
-            builder.Services.AddCustomJwt(builder.Configuration);
-            builder.Services.AddCustomSwagger();
-            builder.Services.AddCustomHealthChecks(builder.Configuration);
-            builder.Services.AddApplicationServices(builder.Configuration);
-
-            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
-
+          
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
+          
+            app.UseSwagger(c =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+                c.RouteTemplate = "swagger/{documentName}/swagger.json";
+            });
 
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "DeveloperStore Sales API v1");
+                c.RoutePrefix = "swagger";
+                c.DocumentTitle = "DeveloperStore API";
+                c.DefaultModelsExpandDepth(-1);
+                c.EnableFilter();
+                c.EnableDeepLinking();
+                c.DisplayRequestDuration();
+                c.EnableValidator();
+            });
+
+          
             app.UseCustomExceptionHandler();
+
+        
             app.UseSerilogRequestLogging();
+
+     
+            app.UseCors(policy =>
+                policy.AllowAnyOrigin()
+                      .AllowAnyMethod()
+                      .AllowAnyHeader());
+
             app.UseHttpsRedirection();
+
+       
             app.UseAuthentication();
             app.UseAuthorization();
+
+          
             app.MapControllers();
             app.MapHealthChecks("/health");
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var scopedServices = scope.ServiceProvider;
+
+                try
+                {
+                    var salesDbContext = scopedServices.GetRequiredService<SalesDbContext>();
+                    await salesDbContext.Database.MigrateAsync();
+
+                    var userDbContext = scopedServices.GetRequiredService<UserDbContext>();
+                    await userDbContext.Database.MigrateAsync();
+
+                    var userManager = scopedServices.GetRequiredService<UserManager<User>>();
+                    await DbInitializer.SeedAsync(userManager);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "An error occurred during migration or seeding");
+                    throw;
+                }
+            }
+
 
 
             app.Run();
