@@ -6,7 +6,7 @@ namespace DeveloperStore.Sales.Infrastructure.Interfaces
 {
     public interface IBaseRepository<T> where T : BaseEntity
     {
-        Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
+        Task<T?> GetAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task<PaginatedList<T>> GetPagedAsync(Expression<Func<T, bool>> predicate,int page,int pageSize,params Expression<Func<T, object>>[] includes);
         Task AddAsync(T entity);

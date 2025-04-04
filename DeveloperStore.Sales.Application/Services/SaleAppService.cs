@@ -46,7 +46,8 @@ namespace DeveloperStore.Sales.Application.Services
         public async Task<SaleOutputDto?> GetByIdAsync(Guid id)
         {
             var repository = _unitOfWork.Repository<Sale>();
-            var sale = await repository.GetAsync(x => x.Id == id);
+            
+            var sale = await repository.GetAsync(x => x.Id == id, x => x.Items);
 
             if (sale is null) return null;
 
