@@ -18,11 +18,18 @@ namespace DeveloperStore.Sales.Infrastructure.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
-            => await _dbSet.FirstOrDefaultAsync(predicate);
+        public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+                query = query.Include(include);
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
-            => await _dbSet.Where(predicate).ToListAsync();
+                                                     => await _dbSet.Where(predicate).ToListAsync();
 
         public async Task<PaginatedList<T>> GetPagedAsync(Expression<Func<T, bool>> predicate,
                                                         int page,int pageSize,
