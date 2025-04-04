@@ -24,9 +24,17 @@ namespace DeveloperStore.Sales.Infrastructure.Repositories
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
             => await _dbSet.Where(predicate).ToListAsync();
 
-        public async Task<PaginatedList<T>> GetPagedAsync(Expression<Func<T, bool>> predicate, int page, int pageSize)
+        public async Task<PaginatedList<T>> GetPagedAsync(Expression<Func<T, bool>> predicate,
+                                                        int page,int pageSize,
+                                                        params Expression<Func<T, object>>[] includes)
         {
-            var query = _dbSet.Where(predicate);
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+                query = query.Include(include);
+
+            query = query.Where(predicate);
+
             var totalCount = await query.CountAsync();
             var items = await query
                 .Skip((page - 1) * pageSize)
@@ -35,6 +43,8 @@ namespace DeveloperStore.Sales.Infrastructure.Repositories
 
             return new PaginatedList<T>(items, totalCount, page, pageSize);
         }
+
+
 
         public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
         public void Update(T entity) => _dbSet.Update(entity);

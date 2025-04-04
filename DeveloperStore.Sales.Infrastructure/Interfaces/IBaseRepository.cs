@@ -8,7 +8,7 @@ namespace DeveloperStore.Sales.Infrastructure.Interfaces
     {
         Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
-        Task<PaginatedList<T>> GetPagedAsync(Expression<Func<T, bool>> predicate, int page, int pageSize);
+        Task<PaginatedList<T>> GetPagedAsync(Expression<Func<T, bool>> predicate,int page,int pageSize,params Expression<Func<T, object>>[] includes);
         Task AddAsync(T entity);
         void Update(T entity);
         void Remove(T entity);

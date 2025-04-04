@@ -3,15 +3,15 @@ using DeveloperStore.Sales.Infrastructure.Data.Context;
 using DeveloperStore.Sales.Infrastructure.Interfaces;
 using DeveloperStore.Sales.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Collections;
+using System.Collections.Concurrent;
 
 namespace DeveloperStore.Sales.Infrastructure.UnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public sealed class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly SalesDbContext _context;
+        private readonly ConcurrentDictionary<string, object> _repositories = new();
         private bool _disposed;
-        private Hashtable? _repositories;
 
         public UnitOfWork(SalesDbContext context)
         {
@@ -20,18 +20,14 @@ namespace DeveloperStore.Sales.Infrastructure.UnitOfWork
 
         public IBaseRepository<T> Repository<T>() where T : BaseEntity
         {
-            _repositories ??= new Hashtable();
+            var typeName = typeof(T).Name;
 
-            var type = typeof(T).Name;
-
-            if (!_repositories.ContainsKey(type))
+            // Retorna do cache ou cria e armazena um novo repositório
+            return (IBaseRepository<T>)_repositories.GetOrAdd(typeName, _ =>
             {
-                var repositoryType = typeof(BaseRepository<>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _context);
-                _repositories.Add(type, repositoryInstance!);
-            }
-
-            return (IBaseRepository<T>)_repositories[type]!;
+                var repositoryType = typeof(BaseRepository<>).MakeGenericType(typeof(T));
+                return Activator.CreateInstance(repositoryType, _context)!;
+            });
         }
 
         public async Task<int> CommitAsync()
@@ -53,12 +49,14 @@ namespace DeveloperStore.Sales.Infrastructure.UnitOfWork
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_disposed) return;
 
             if (disposing)
+            {
                 _context.Dispose();
+            }
 
             _disposed = true;
         }

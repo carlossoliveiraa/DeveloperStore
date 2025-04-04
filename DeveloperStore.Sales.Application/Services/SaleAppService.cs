@@ -90,7 +90,12 @@ namespace DeveloperStore.Sales.Application.Services
         {
             var repository = _unitOfWork.Repository<Sale>();
 
-            var result = await repository.GetPagedAsync(s => true, page, pageSize);
+            var result = await repository.GetPagedAsync(
+                s => true,
+                page,
+                pageSize,
+                s => s.Items // Inclui os itens da venda
+            );
 
             var saleDtos = result.Items.Select(sale => new SaleOutputDto
             {
@@ -121,6 +126,5 @@ namespace DeveloperStore.Sales.Application.Services
                 TotalCount = result.TotalCount
             };
         }
-
     }
 }

@@ -1,70 +1,98 @@
 # Developer Store - Sales API
 
-A robust sales management system built with .NET 8, following DDD (Domain-Driven Design) principles, Clean Architecture, and SOLID patterns.
+A robust sales management system built with .NET 8, following Domain-Driven Design (DDD), Clean Architecture, and SOLID principles.
+
+---
 
 ## Architecture Overview
 
-### Domain-Driven Design (DDD) Implementation
-- **Domain Layer**: Contains the core business logic, entities, and value objects
-- **Application Layer**: Handles use cases and orchestrates domain objects
-- **Infrastructure Layer**: Implements persistence and external services
-- **API Layer**: Provides the REST interface
-- **CrossCutting Layer**: Contains shared components and utilities
+### Domain-Driven Design (DDD)
+- **Domain Layer**: Core business logic, entities, and value objects
+- **Application Layer**: Use case orchestration and business rules
+- **Infrastructure Layer**: Database access and external services
+- **API Layer**: RESTful interface
+- **CrossCutting Layer**: Shared components and utilities
 
-### Design Patterns Used
-- **Repository Pattern**: For data access abstraction
-- **Unit of Work**: Ensures transaction consistency
-- **Strategy Pattern**: For flexible business rule implementation
-- **Factory Pattern**: For object creation
-- **Observer Pattern**: For event handling (implemented via MediatR)
-- **Specification Pattern**: For complex business rules
+### Design Patterns Implemented
+- **Repository Pattern**: Data access abstraction
+- **Unit of Work**: Transactional consistency
+- **Strategy Pattern**: Flexible business rule logic
+- **Factory Pattern**: Object creation strategy
+- **Observer Pattern**: Event handling via MediatR
+- **Specification Pattern**: Encapsulated complex rules
 
 ### Clean Architecture
 - Clear separation of concerns
-- Dependency inversion principle
-- Independent of frameworks
-- Testable architecture
+- Framework-independent core
+- Inversion of control
+- Testable and maintainable
+
+---
 
 ## Getting Started
 
 ### Prerequisites
-- .NET 8 SDK
-- Docker Desktop
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - Visual Studio 2022 or VS Code
 
-### Installation Steps
+---
 
-1. Clone the repository
-```bash
-git clone https://github.com/carlossoliveiraa/DeveloperStore.git
-cd DeveloperStore
+### ⚠️ Important: PostgreSQL must be running
 
+Before running the API, ensure the PostgreSQL container is running.  
+If not, the application **will fail to start** due to a missing database connection.
 
-2. Start PostgreSQL using Docker
+Start the database container with:
+
 ```bash
 docker-compose -f docker-compose.db.yml up -d
 ```
 
-3. Run Database Migrations
+Or run it manually:
+
 ```bash
-# For Sales Context
+docker run --name sales_postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=SalesDb \
+  -p 5432:5432 \
+  -d postgres:16
+```
+
+---
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/carlossoliveiraa/DeveloperStore.git
+cd DeveloperStore
+```
+
+2. Run database migrations:
+```bash
+# Sales context
 Add-Migration InitialSales -Context SalesDbContext -OutputDir Data/Migrations/Sales
 Update-Database -Context SalesDbContext
 
-# For Identity Context
+# Identity context
 Add-Migration InitialIdentity -Context UserDbContext -OutputDir Data/Migrations/Identity
 Update-Database -Context UserDbContext
 ```
 
-4. Run the application
+3. Run the API:
 ```bash
 dotnet run --project DeveloperStore.Sales.API
 ```
 
-## Testing the API
+---
 
-### Authentication
-First, obtain a JWT token by authenticating:
+## API Usage
+
+### 🔐 Authentication
+
+Request a JWT token:
 
 ```http
 POST /api/auth/login
@@ -76,8 +104,7 @@ Content-Type: application/json
 }
 ```
 
-### Creating a Sale
-Use the following model to create a sale:
+### 🛒 Creating a Sale
 
 ```http
 POST /api/sales
@@ -108,41 +135,50 @@ Content-Type: application/json
 }
 ```
 
+---
+
 ## Testing Coverage
 
-The project maintains a high testing standard with over 70% unit test coverage. Tests are implemented using:
-- xUnit for test framework
-- Moq for mocking
-- FluentAssertions for assertions
+The project maintains over **70% unit test coverage**, using:
 
+- **xUnit** for test framework
+- **Moq** for mocking
+- **FluentAssertions** for fluent assertions
 
-Key areas covered by tests:
+### Covered Areas:
 - Domain entities and value objects
-- Application services
-- Command/Query handlers
-- Business rules validation
-- Integration tests for critical paths
+- Application services and orchestrators
+- Command and query handlers
+- Business rule validations
+- Critical path integration tests
+
+---
 
 ## Recent Updates
 
-### Event Handling Implementation
-We've recently added an event-based messaging system using MediatR:
-- `QueueMessageEvent`: Represents messages to be queued
-- `QueueMessageEventHandler`: Handles message logging
-- Asynchronous processing
-- Structured logging integration
+### 📣 Event-Based Architecture
+
+Event-driven messaging system integrated with MediatR:
+- `QueueMessageEvent`: Represents outbound messages
+- `QueueMessageEventHandler`: Logs message details
+- Asynchronous processing with structured logging
+
+---
 
 ## Technical Specifications
 
-- **Framework**: .NET 8
-- **Database**: PostgreSQL
-- **ORM**: Entity Framework Core
-- **Authentication**: JWT Bearer
-- **Documentation**: Swagger/OpenAPI
-- **Logging**: Structured logging with Serilog
-- **Message Bus**: MediatR for in-memory events
+| Feature            | Technology               |
+|--------------------|---------------------------|
+| Framework          | .NET 8                    |
+| Database           | PostgreSQL                |
+| ORM                | Entity Framework Core     |
+| Authentication     | JWT Bearer                |
+| API Documentation  | Swagger / OpenAPI         |
+| Logging            | Serilog (structured)      |
+| Messaging          | MediatR (in-memory bus)   |
+
+---
 
 ## Contributing
 
-Please read our contributing guidelines before submitting pull requests.
-
+Pull requests are welcome. Please review our contributing guidelines before submitting.
