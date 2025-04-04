@@ -94,7 +94,7 @@ namespace DeveloperStore.Sales.Application.Services
                 s => true,
                 page,
                 pageSize,
-                s => s.Items // Inclui os itens da venda
+                s => s.Items 
             );
 
             var saleDtos = result.Items.Select(sale => new SaleOutputDto
