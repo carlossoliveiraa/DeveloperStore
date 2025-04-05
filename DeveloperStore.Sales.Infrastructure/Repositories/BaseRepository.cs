@@ -50,9 +50,6 @@ namespace DeveloperStore.Sales.Infrastructure.Repositories
 
             return new PaginatedList<T>(items, totalCount, page, pageSize);
         }
-
-
-
         public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
         public void Update(T entity) => _dbSet.Update(entity);
         public void Remove(T entity) => _dbSet.Remove(entity);
