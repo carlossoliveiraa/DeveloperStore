@@ -42,38 +42,31 @@ Repository Front-End : https://github.com/carlossoliveiraa/DeveloperStore-Front
 
 ### ⚠️ Important: PostgreSQL must be running
 
-Before running the API, ensure the PostgreSQL container is running.  
-If not, the application **will fail to start** due to a missing database connection.
+Before running the API, ensure the PostgreSQL container is running.
+If not, the application will fail to start due to a missing database connection.
+
+⚠️ Important: Make sure you are inside the root folder of the project before executing the command below.
+Otherwise, Docker won't be able to find the correct docker-compose.db.yml file and the command will not work.
 
 Start the database container with:
-
-```bash
 docker-compose -f docker-compose.db.yml up -d
-```
 
 Or run it manually:
 
-```bash
 docker run --name sales_postgres \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=postgres \
   -e POSTGRES_DB=SalesDb \
   -p 5432:5432 \
   -d postgres:16
-```
-
----
 
 ### Installation
 
 1. Clone the repository:
-```bash
 git clone https://github.com/carlossoliveiraa/DeveloperStore.git
 cd DeveloperStore
-```
 
-2. Run database migrations:
-```bash
+3. Run database migrations:
 # Sales context
 Add-Migration InitialSales -Context SalesDbContext -OutputDir Data/Migrations/Sales
 Update-Database -Context SalesDbContext
@@ -81,14 +74,8 @@ Update-Database -Context SalesDbContext
 # Identity context
 Add-Migration InitialIdentity -Context UserDbContext -OutputDir Data/Migrations/Identity
 Update-Database -Context UserDbContext
-```
-
 3. Run the API:
-```bash
 dotnet run --project DeveloperStore.Sales.API
-```
-
----
 
 ## API Usage
 
@@ -96,7 +83,6 @@ dotnet run --project DeveloperStore.Sales.API
 
 Request a JWT token:
 
-```http
 POST /api/auth/login
 Content-Type: application/json
 
@@ -104,11 +90,10 @@ Content-Type: application/json
   "email": "admin@admin.com",
   "password": "admin"
 }
-```
+
 
 ### 🛒 Creating a Sale
 
-```http
 POST /api/sales
 Authorization: Bearer {your-jwt-token}
 Content-Type: application/json
@@ -135,9 +120,6 @@ Content-Type: application/json
     }
   ]
 }
-```
-
----
 
 ## Testing Coverage
 
@@ -153,8 +135,6 @@ The project maintains over **70% unit test coverage**, using:
 - Command and query handlers
 - Business rule validations
 - Critical path integration tests
-
----
 
 ## Recent Updates
 
