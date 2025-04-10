@@ -14,11 +14,10 @@ namespace DeveloperStore.Sales.Application.Events.Handlers
 
         public Task Handle(QueueMessageEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation(
-                "Mensagem adicionada à fila {QueueName} em {Timestamp}: {Message}",
+            _logger.LogInformation("[Queue Simulated] -> Queue: {Queue}, Message: {Message}, Timestamp: {Timestamp}",
                 notification.QueueName,
-                notification.Timestamp,
-                notification.Message);
+                notification.Message,
+                notification.Timestamp);
 
             return Task.CompletedTask;
         }
