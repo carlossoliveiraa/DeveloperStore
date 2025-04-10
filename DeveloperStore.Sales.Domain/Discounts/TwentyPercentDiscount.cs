@@ -8,8 +8,10 @@ namespace DeveloperStore.Sales.Domain.Strategies
 
         public decimal Calculate(int quantity, decimal unitPrice)
         {
-            var total = quantity * unitPrice;
-            return total * 0.20m;
+            if (unitPrice < 0)
+                throw new ArgumentOutOfRangeException(nameof(unitPrice), "Unit price cannot be negative.");
+
+            return quantity * unitPrice * 0.20m;
         }
 
     }

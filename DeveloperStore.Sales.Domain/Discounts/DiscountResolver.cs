@@ -21,9 +21,13 @@ namespace DeveloperStore.Sales.Domain.Discounts
         /// </summary>
         /// <param name="quantity">The quantity of products being purchased.</param>
         /// <returns>The applicable IDiscount implementation.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when quantity is zero or negative.</exception>
         /// <exception cref="InvalidOperationException">Thrown when quantity exceeds the allowed maximum.</exception>
         public static IDiscount Resolve(int quantity)
         {
+            if (quantity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be greater than 0.");
+
             var strategy = _strategies.FirstOrDefault(s => s.IsApplicable(quantity));
 
             return strategy ?? throw new InvalidOperationException("Cannot sell more than 20 items of the same product.");

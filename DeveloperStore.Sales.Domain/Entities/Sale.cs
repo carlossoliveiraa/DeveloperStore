@@ -15,7 +15,7 @@ namespace DeveloperStore.Sales.Domain.Entities
         private readonly List<SaleItem> _items = new();
         public IReadOnlyCollection<SaleItem> Items => _items.AsReadOnly();
 
-        public decimal TotalAmount => _items.Sum(item => item.Total);
+        public decimal TotalAmount { get; private set; }
 
         public Sale(
             string saleNumber,
@@ -31,8 +31,14 @@ namespace DeveloperStore.Sales.Domain.Entities
             if (customerId == Guid.Empty)
                 throw new BusinessRuleValidationException("Customer ID is required.");
 
+            if (string.IsNullOrWhiteSpace(customerName))
+                throw new BusinessRuleValidationException("Customer name is required.");
+
             if (branchId == Guid.Empty)
                 throw new BusinessRuleValidationException("Branch ID is required.");
+
+            if (string.IsNullOrWhiteSpace(branchName))
+                throw new BusinessRuleValidationException("Branch name is required.");
 
             SaleNumber = saleNumber;
             SaleDate = saleDate;
@@ -40,16 +46,34 @@ namespace DeveloperStore.Sales.Domain.Entities
             CustomerName = customerName;
             BranchId = branchId;
             BranchName = branchName;
+            IsCancelled = false;
         }
 
         public void AddItem(Guid productId, string productName, int quantity, decimal unitPrice)
         {
+            if (IsCancelled)
+                throw new BusinessRuleValidationException("Cannot add items to a cancelled sale.");
+
             var item = new SaleItem(productId, productName, quantity, unitPrice);
             _items.Add(item);
+            TotalAmount += item.Total;
         }
 
-        public void Cancel() => IsCancelled = true;
+        public void Cancel()
+        {
+            if (IsCancelled)
+                throw new BusinessRuleValidationException("Sale is already cancelled.");
 
-        public void ClearItems() => _items.Clear();
+            IsCancelled = true;
+        }
+
+        public void ClearItems()
+        {
+            if (IsCancelled)
+                throw new BusinessRuleValidationException("Cannot clear items from a cancelled sale.");
+
+            _items.Clear();
+            TotalAmount = 0m;
+        }
     }
 }

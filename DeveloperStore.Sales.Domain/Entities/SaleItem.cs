@@ -21,19 +21,19 @@ namespace DeveloperStore.Sales.Domain.Entities
                 throw new BusinessRuleValidationException("Product name is required.");
 
             if (quantity <= 0)
-                throw new BusinessRuleValidationException("Quantity must be greater than zero.");
+                throw new BusinessRuleValidationException("Quantity must be greater than 0.");
 
             if (quantity > 20)
                 throw new BusinessRuleValidationException("Cannot sell more than 20 items of the same product.");
 
-            if (unitPrice <= 0)
-                throw new BusinessRuleValidationException("Unit price must be greater than zero.");
+            if (unitPrice < 0)
+                throw new BusinessRuleValidationException("Unit price cannot be negative.");
 
             ProductId = productId;
             ProductName = productName;
             Quantity = quantity;
             UnitPrice = unitPrice;
-                       
+
             var discount = DiscountResolver.Resolve(quantity);
             Discount = discount.Calculate(quantity, unitPrice);
         }
