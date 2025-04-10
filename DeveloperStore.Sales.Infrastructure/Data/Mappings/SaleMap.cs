@@ -36,6 +36,10 @@ namespace DeveloperStore.Sales.Infrastructure.Data.Mappings
             builder.Property(s => s.IsCancelled)
                 .IsRequired();
 
+            builder.Property(s => s.TotalAmount)
+                .IsRequired()
+                .HasPrecision(18, 2);
+
             // Sale -> SaleItems (1:N)
             builder.HasMany(s => s.Items)
                    .WithOne()

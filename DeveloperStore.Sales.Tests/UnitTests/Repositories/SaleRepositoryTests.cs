@@ -4,7 +4,7 @@ using DeveloperStore.Sales.Infrastructure.UnitOfWork;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
-namespace DeveloperStore.Sales.Tests.Repositories;
+namespace DeveloperStore.Sales.Tests.UnitTests.Repositories;
 
 public class SaleRepositoryTests
 {
