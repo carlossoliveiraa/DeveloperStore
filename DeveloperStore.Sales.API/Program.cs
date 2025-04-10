@@ -31,6 +31,7 @@ public class Program
             services.AddCustomHealthChecks(configuration);
             services.AddControllers();
             services.AddEndpointsApiExplorer();
+       
 
             var app = builder.Build();
 
@@ -47,11 +48,9 @@ public class Program
                 c.DisplayRequestDuration();
                 c.EnableValidator();
             });
-          
-            app.UseCustomExceptionHandler();
-        
+
             app.UseSerilogRequestLogging();
-     
+            app.UseCustomExceptionHandler();  
             app.UseCors(policy =>
                 policy.AllowAnyOrigin()
                       .AllowAnyMethod()
