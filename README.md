@@ -51,7 +51,7 @@ Otherwise, Docker won't be able to find the correct docker-compose.db.yml file a
 Start the database container with:
 docker-compose -f docker-compose.db.yml up -d
 
-Or run it manually:
+or run it manually if the database does not yet exist
 
 docker run --name sales_postgres \
   -e POSTGRES_USER=postgres \
