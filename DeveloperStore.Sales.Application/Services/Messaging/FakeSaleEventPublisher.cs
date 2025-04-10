@@ -14,13 +14,13 @@ namespace DeveloperStore.Sales.Application.Services.Messaging
 
         public Task PublishSaleCreatedAsync(Guid saleId)
         {
-            _logger.LogInformation($"[Event] SaleCreated: {saleId}");
+            _logger.LogInformation($"[Queue Simulated]-[Event] SaleCreated: {saleId}");
             return Task.CompletedTask;
         }
 
         public Task PublishSaleCancelledAsync(Guid saleId)
         {
-            _logger.LogInformation($"[Event] SaleCancelled: {saleId}");
+            _logger.LogInformation($"[Queue Simulated]-[Event] SaleCancelled: {saleId}");
             return Task.CompletedTask;
         }
     }

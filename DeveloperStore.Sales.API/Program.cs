@@ -1,11 +1,11 @@
 using DeveloperStore.Sales.API.Extensions;
 using DeveloperStore.Sales.API.Settings;
-using DeveloperStore.Sales.Infrastructure.Data.Context;
 using DeveloperStore.Sales.Infrastructure.Data;
+using DeveloperStore.Sales.Infrastructure.Data.Context;
 using DeveloperStore.Sales.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
-using Serilog;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 public class Program
 {
@@ -16,9 +16,9 @@ public class Program
             Log.Information("Starting web application");
 
             var builder = WebApplication.CreateBuilder(args);
-
          
             builder.Host.ConfigureLoggingExtensions();
+                   
 
             var services = builder.Services;
             var configuration = builder.Configuration;
@@ -29,6 +29,7 @@ public class Program
             services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
             services.AddCustomSwagger();
             services.AddCustomHealthChecks(configuration);
+            services.AddCustomMediatR();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
        

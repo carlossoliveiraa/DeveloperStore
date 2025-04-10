@@ -1,9 +1,11 @@
 ﻿using DeveloperStore.Sales.Application.DTOs;
 using DeveloperStore.Sales.Application.DTOs.Inputs;
 using DeveloperStore.Sales.Application.DTOs.Outputs;
+using DeveloperStore.Sales.Application.Events;
 using DeveloperStore.Sales.Application.Interfaces.Messaging;
 using DeveloperStore.Sales.Domain.Entities;
 using DeveloperStore.Sales.Infrastructure.UnitOfWork;
+using MediatR;
 
 namespace DeveloperStore.Sales.Application.Services
 {
@@ -11,11 +13,13 @@ namespace DeveloperStore.Sales.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISaleEventPublisher _eventPublisher;
+        private readonly IMediator _mediator;
 
-        public SaleAppService(IUnitOfWork unitOfWork, ISaleEventPublisher eventPublisher)
+        public SaleAppService(IUnitOfWork unitOfWork, ISaleEventPublisher eventPublisher, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
             _eventPublisher = eventPublisher;
+            _mediator = mediator;
         }
 
         public async Task<Guid> CreateAsync(SaleInputDto dto)
@@ -39,6 +43,10 @@ namespace DeveloperStore.Sales.Application.Services
             await _unitOfWork.CommitAsync();
 
             await _eventPublisher.PublishSaleCreatedAsync(sale.Id);
+
+            await _mediator.Publish(new QueueMessageEvent(
+                                    message: $"Sale created with ID {sale.Id}",
+                                    queueName: "sales.created" ));
 
             return sale.Id;
         }
@@ -87,6 +95,10 @@ namespace DeveloperStore.Sales.Application.Services
             await _unitOfWork.CommitAsync();
 
             await _eventPublisher.PublishSaleCancelledAsync(sale.Id);
+
+            await _mediator.Publish(new QueueMessageEvent(
+                                    message: $"Sale cancelled with ID {sale.Id}",
+                                    queueName: "sales.cancelled"));
         }
 
         public async Task<PagedResult<SaleOutputDto>> ListPagedAsync(int page, int pageSize)
