@@ -46,7 +46,7 @@ namespace DeveloperStore.Sales.Application.Services
         public async Task<SaleOutputDto?> GetByIdAsync(Guid id)
         {
             var repository = _unitOfWork.Repository<Sale>();
-            
+
             var sale = await repository.GetAsync(x => x.Id == id, x => x.Items);
 
             if (sale is null) return null;
@@ -67,7 +67,9 @@ namespace DeveloperStore.Sales.Application.Services
                     ProductId = i.ProductId,
                     ProductName = i.ProductName,
                     Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
+                    UnitPrice = i.UnitPrice,
+                    Discount = i.Discount,
+                    Total = i.Total
                 }).ToList()
             };
         }
@@ -95,7 +97,7 @@ namespace DeveloperStore.Sales.Application.Services
                 s => true,
                 page,
                 pageSize,
-                s => s.Items 
+                s => s.Items
             );
 
             var saleDtos = result.Items.Select(sale => new SaleOutputDto
@@ -114,7 +116,9 @@ namespace DeveloperStore.Sales.Application.Services
                     ProductId = i.ProductId,
                     ProductName = i.ProductName,
                     Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
+                    UnitPrice = i.UnitPrice,
+                    Discount = i.Discount,
+                    Total = i.Total
                 }).ToList()
             });
 
