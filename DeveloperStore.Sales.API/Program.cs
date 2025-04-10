@@ -22,7 +22,6 @@ public class Program
 
             var services = builder.Services;
             var configuration = builder.Configuration;
-
          
             services.AddCustomIdentity(configuration);
             services.AddApplicationServices(configuration);
@@ -34,7 +33,6 @@ public class Program
             services.AddEndpointsApiExplorer();
 
             var app = builder.Build();
-
 
             app.UseSwagger();
 
@@ -49,13 +47,10 @@ public class Program
                 c.DisplayRequestDuration();
                 c.EnableValidator();
             });
-
           
             app.UseCustomExceptionHandler();
-
         
             app.UseSerilogRequestLogging();
-
      
             app.UseCors(policy =>
                 policy.AllowAnyOrigin()
@@ -63,11 +58,9 @@ public class Program
                       .AllowAnyHeader());
 
             app.UseHttpsRedirection();
-
        
             app.UseAuthentication();
             app.UseAuthorization();
-
           
             app.MapControllers();
             app.MapHealthChecks("/health");
@@ -93,8 +86,6 @@ public class Program
                     throw;
                 }
             }
-
-
 
             app.Run();
         }

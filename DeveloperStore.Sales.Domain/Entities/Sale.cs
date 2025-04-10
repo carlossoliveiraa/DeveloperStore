@@ -52,5 +52,4 @@ namespace DeveloperStore.Sales.Domain.Entities
 
         public void ClearItems() => _items.Clear();
     }
-
 }

@@ -1,5 +1,4 @@
-﻿// BaseController.cs
-using DeveloperStore.Sales.API.Models;
+﻿using DeveloperStore.Sales.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeveloperStore.Sales.API.Controllers

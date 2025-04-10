@@ -13,7 +13,6 @@ namespace DeveloperStore.Sales.Infrastructure.Repositories
         {
             _context = context;
         }
-
         public async Task<Sale?> GetByIdWithItemsAsync(Guid id)
         {
             return await _context.Sales

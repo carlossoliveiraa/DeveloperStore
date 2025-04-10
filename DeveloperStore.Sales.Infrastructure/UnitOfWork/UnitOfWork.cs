@@ -21,8 +21,7 @@ namespace DeveloperStore.Sales.Infrastructure.UnitOfWork
         public IBaseRepository<T> Repository<T>() where T : BaseEntity
         {
             var typeName = typeof(T).Name;
-
-            // Retorna do cache ou cria e armazena um novo repositório
+                        
             return (IBaseRepository<T>)_repositories.GetOrAdd(typeName, _ =>
             {
                 var repositoryType = typeof(BaseRepository<>).MakeGenericType(typeof(T));
@@ -48,7 +47,6 @@ namespace DeveloperStore.Sales.Infrastructure.UnitOfWork
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
         private void Dispose(bool disposing)
         {
             if (_disposed) return;
