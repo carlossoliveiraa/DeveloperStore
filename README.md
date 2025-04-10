@@ -82,7 +82,7 @@ dotnet run --project DeveloperStore.Sales.API
 ### 🔐 Authentication
 
 Request a JWT token:
-
+```http
 POST /api/auth/login
 Content-Type: application/json
 
@@ -90,10 +90,17 @@ Content-Type: application/json
   "email": "admin@admin.com",
   "password": "admin"
 }
-
+```
 
 ### 🛒 Creating a Sale
 
+POST /api/sales
+Authorization: Bearer {your-jwt-token}
+Content-Type: application/json
+
+### 🛒 Creating a Sale
+
+```http
 POST /api/sales
 Authorization: Bearer {your-jwt-token}
 Content-Type: application/json
@@ -120,6 +127,7 @@ Content-Type: application/json
     }
   ]
 }
+```
 
 ## Testing Coverage
 
