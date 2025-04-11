@@ -1,8 +1,8 @@
-﻿using DeveloperStore.Sales.Application.DTOs;
-using DeveloperStore.Sales.Application.DTOs.Inputs;
+﻿using DeveloperStore.Sales.Application.DTOs.Inputs;
 using DeveloperStore.Sales.Application.DTOs.Outputs;
 using DeveloperStore.Sales.Application.Events;
 using DeveloperStore.Sales.Application.Interfaces.Messaging;
+using DeveloperStore.Sales.CrossCutting.Pagination;
 using DeveloperStore.Sales.Domain.Entities;
 using DeveloperStore.Sales.Infrastructure.UnitOfWork;
 using MediatR;

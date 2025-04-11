@@ -1,4 +1,4 @@
-﻿namespace DeveloperStore.Sales.Application.DTOs
+﻿namespace DeveloperStore.Sales.CrossCutting.Pagination
 {
     public class PagedResult<T>
     {
